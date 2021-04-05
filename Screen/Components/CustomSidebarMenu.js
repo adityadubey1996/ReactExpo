@@ -1,22 +1,16 @@
-import React from 'react';
-import {View, Text, Alert, StyleSheet} from 'react-native';
+import React from 'react'
+import { View, Text, Alert, StyleSheet } from 'react-native'
 
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
 
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-community/async-storage'
 
-const CustomSidebarMenu = props => {
+const CustomSidebarMenu = (props) => {
   return (
     <View style={stylesSidebar.sideMenuContainer}>
       <View style={stylesSidebar.profileHeader}>
         <View style={stylesSidebar.profileHeaderPicCircle}>
-          <Text style={{fontSize: 25, color: '#307ecc'}}>
-            {'About React'.charAt(0)}
-          </Text>
+          <Text style={{ fontSize: 25, color: '#307ecc' }}>{'About React'.charAt(0)}</Text>
         </View>
         <Text style={stylesSidebar.profileHeaderText}>Test</Text>
       </View>
@@ -25,9 +19,9 @@ const CustomSidebarMenu = props => {
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
-          label={({color}) => <Text style={{color: '#d8d8d8'}}>Logout</Text>}
+          label={({ color }) => <Text style={{ color: '#d8d8d8' }}>Logout</Text>}
           onPress={() => {
-            props.navigation.toggleDrawer();
+            props.navigation.toggleDrawer()
             Alert.alert(
               'Logout',
               'Are you sure? You want to logout?',
@@ -35,27 +29,27 @@ const CustomSidebarMenu = props => {
                 {
                   text: 'Cancel',
                   onPress: () => {
-                    return null;
+                    return null
                   },
                 },
                 {
                   text: 'Confirm',
                   onPress: () => {
-                    AsyncStorage.clear();
-                    props.navigation.replace('Auth');
+                    AsyncStorage.clear()
+                    props.navigation.navigate('Auth')
                   },
                 },
               ],
-              {cancelable: false},
-            );
+              { cancelable: false }
+            )
           }}
         />
       </DrawerContentScrollView>
     </View>
-  );
-};
+  )
+}
 
-export default CustomSidebarMenu;
+export default CustomSidebarMenu
 
 const stylesSidebar = StyleSheet.create({
   sideMenuContainer: {
@@ -93,4 +87,4 @@ const stylesSidebar = StyleSheet.create({
     backgroundColor: '#e2e2e2',
     marginTop: 15,
   },
-});
+})

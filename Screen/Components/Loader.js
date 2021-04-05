@@ -1,32 +1,29 @@
-import React from 'react';
-import {StyleSheet, View, Modal, ActivityIndicator} from 'react-native';
-
-const Loader = props => {
-  const {loading, ...attributes} = props;
-
+import React from 'react'
+import { StyleSheet, View, Modal, ActivityIndicator } from 'react-native'
+import { useSelector } from 'react-redux'
+const Loader = (props) => {
+  const { loading, ...attributes } = props
+  const LoadingState = useSelector((state) => state.Loaderreducer)
+  console.log('Loader -> LoadingState', LoadingState)
   return (
     <Modal
       transparent={true}
       animationType={'none'}
-      visible={loading}
+      visible={LoadingState}
       onRequestClose={() => {
-        console.log('close modal');
-      }}>
+        console.log('close modal')
+      }}
+    >
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
-          <ActivityIndicator
-            animating={true}
-            color="#000000"
-            size="large"
-            style={styles.activityIndicator}
-          />
+          <ActivityIndicator animating={true} color="#000000" size="large" style={styles.activityIndicator} />
         </View>
       </View>
     </Modal>
-  );
-};
+  )
+}
 
-export default Loader;
+export default Loader
 
 const styles = StyleSheet.create({
   modalBackground: {
@@ -49,4 +46,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 80,
   },
-});
+})

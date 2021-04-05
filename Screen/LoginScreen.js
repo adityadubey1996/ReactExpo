@@ -1,42 +1,59 @@
-import React, {useState, createRef} from 'react';
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  Text,
-  ScrollView,
-  Image,
-  Keyboard,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-} from 'react-native';
+import React, { useState, createRef } from 'react'
+import { StyleSheet, TextInput, View, Text, ScrollView, Image, Keyboard, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
+import ProjectSettings from '../Global'
+import { useDispatch, useSelector } from 'react-redux'
+import AsyncStorage from '@react-native-community/async-storage'
+import { LoginActions } from '../redux/actions/Login'
+import Loader from './Components/Loader'
+const LoginScreen = ({ navigation }) => {
+  const [userEmail, setUserEmail] = useState('')
+  const [userPassword, setUserPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [errortext, setErrortext] = useState('')
+  const dispatch = useDispatch()
+  const state = useSelector((state) => state.LoginReducer)
+  const LoadingState = useSelector((state) => state.Loaderreducer.state)
+  const passwordInputRef = createRef()
 
-import AsyncStorage from '@react-native-community/async-storage';
-
-import Loader from './Components/Loader';
-const LoginScreen = ({navigation}) => {
-  const [userEmail, setUserEmail] = useState('');
-  const [userPassword, setUserPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errortext, setErrortext] = useState('');
-
-  const passwordInputRef = createRef();
   const handleSubmitPress = () => {
-    setErrortext('');
+    setErrortext('')
     if (!userEmail) {
-      alert('Please fill Email');
-      return;
+      alert('Please fill Email')
+      return
     }
     if (!userPassword) {
-      alert('Please fill Password');
-      return;
+      alert('Please fill Password')
+      return
     }
-    setLoading(true);
-    let dataToSend = {email: userEmail, password: userPassword};
+    setLoading(true)
     let formBody = {
       email: userEmail,
       password: userPassword,
-    };
+    }
+    dispatch(LoginActions(userEmail, userPassword))
+
+    // if (Object.keys(state).length > 0) {
+    //   console.log('LoginScreen -> state', state)
+
+    //   if (state.sucees) {
+    //     console.log('LoginScreen -> state', state)
+
+    //     if (state.emailState) {
+    //       setLoading(false)
+    //       navigation.replace('BottomTabs')
+    //     } else {
+    //       setLoading(false)
+    //       navigation.replace('EmailStateFalse')
+    //     }
+    //   } else {
+    //     setLoading(false)
+    //     setErrortext('something went wrong')
+    //   }
+    // }
+    // dispatch({
+    //   type: 'LOGIN',
+    //   formBody,
+    // })
 
     // for (let key in dataToSend) {
     //   let encodedKey = encodeURIComponent(key);
@@ -45,42 +62,38 @@ const LoginScreen = ({navigation}) => {
     // }
     // formBody = formBody.join('&');
 
-    fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(formBody),
-      headers: {
-        //Header Defination
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => response.json())
-      .then(responseJson => {
-        console.log('handleSubmitPress -> responseJson', responseJson);
-        //Hide Loader
-        setLoading(false);
-        // If server response message same as Data Matched
-        if (responseJson.sucees) {
-          AsyncStorage.setItem('user_id', responseJson.token);
-          AsyncStorage.setItem(
-            'EmailStatus',
-            JSON.stringify(responseJson.user.emailState),
-          );
-          if (responseJson.user.emailState) {
-            navigation.replace('BottomTabs');
-          } else {
-            navigation.replace('EmailStateFalse');
-          }
-        } else {
-          setErrortext(responseJson.message);
-          console.log('Please check your email id or password');
-        }
-      })
-      .catch(error => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
-      });
-  };
+    // fetch(`${ProjectSettings.baseURL}/api/auth/login`, {
+    //   method: 'POST',
+    //   body: JSON.stringify(formBody),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // })
+    //   .then((response) => response.json())
+    //   .then((responseJson) => {
+    //     console.log('handleSubmitPress -> responseJson', responseJson)
+    //     //Hide Loader
+    //     setLoading(false)
+    //     // If server response message same as Data Matched
+    //     if (responseJson.sucees) {
+    //       AsyncStorage.setItem('user_id', responseJson.token)
+    //       AsyncStorage.setItem('EmailStatus', JSON.stringify(responseJson.user.emailState))
+    //       if (responseJson.user.emailState) {
+    //         navigation.replace('BottomTabs')
+    //       } else {
+    //         navigation.replace('EmailStateFalse')
+    //       }
+    //     } else {
+    //       setErrortext(responseJson.message)
+    //       console.log('Please check your email id or password')
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log('LoginScreen -> error', error)
+    //     //Hide Loader
+    //     setLoading(false)
+    //   })
+  }
   return (
     <View style={styles.mainBody}>
       <Loader loading={loading} />
@@ -90,10 +103,11 @@ const LoginScreen = ({navigation}) => {
           flex: 1,
           justifyContent: 'center',
           alignContent: 'center',
-        }}>
+        }}
+      >
         <View>
           <KeyboardAvoidingView enabled>
-            <View style={{alignItems: 'center'}}>
+            <View style={{ alignItems: 'center' }}>
               {/* <Image
                 source={require('../Image/aboutreact.png')}
                 style={{
@@ -107,15 +121,13 @@ const LoginScreen = ({navigation}) => {
             <View style={styles.SectionStyle}>
               <TextInput
                 style={styles.inputStyle}
-                onChangeText={UserEmail => setUserEmail(UserEmail)}
+                onChangeText={(UserEmail) => setUserEmail(UserEmail)}
                 placeholder="Enter Email" //dummy@abc.com
                 placeholderTextColor="#8b9cb5"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 returnKeyType="next"
-                onSubmitEditing={() =>
-                  passwordInputRef.current && passwordInputRef.current.focus()
-                }
+                onSubmitEditing={() => passwordInputRef.current && passwordInputRef.current.focus()}
                 underlineColorAndroid="#f000"
                 blurOnSubmit={false}
               />
@@ -123,7 +135,7 @@ const LoginScreen = ({navigation}) => {
             <View style={styles.SectionStyle}>
               <TextInput
                 style={styles.inputStyle}
-                onChangeText={UserPassword => setUserPassword(UserPassword)}
+                onChangeText={(UserPassword) => setUserPassword(UserPassword)}
                 placeholder="Enter Password" //12345
                 placeholderTextColor="#8b9cb5"
                 keyboardType="default"
@@ -135,26 +147,19 @@ const LoginScreen = ({navigation}) => {
                 returnKeyType="next"
               />
             </View>
-            {errortext != '' ? (
-              <Text style={styles.errorTextStyle}>{errortext}</Text>
-            ) : null}
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              activeOpacity={0.5}
-              onPress={handleSubmitPress}>
+            {errortext != '' ? <Text style={styles.errorTextStyle}>{errortext}</Text> : null}
+            <TouchableOpacity style={styles.buttonStyle} activeOpacity={0.5} onPress={handleSubmitPress}>
               <Text style={styles.buttonTextStyle}>LOGIN</Text>
             </TouchableOpacity>
-            <Text
-              style={styles.registerTextStyle}
-              onPress={() => navigation.navigate('RegisterScreen')}>
+            <Text style={styles.registerTextStyle} onPress={() => navigation.navigate('RegisterScreen')}>
               New Here ? Register
             </Text>
           </KeyboardAvoidingView>
         </View>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 const styles = StyleSheet.create({
   mainBody: {
     flex: 1,
@@ -210,5 +215,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
-});
-export default LoginScreen;
+})
+export default LoginScreen

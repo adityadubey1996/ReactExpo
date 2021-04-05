@@ -7,11 +7,10 @@
  */
 import 'react-native-gesture-handler'
 import React from 'react'
-import type { Node } from 'react'
 import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, useColorScheme, View, Button } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-
+import NavigationService from './services/NavigationService'
 import { Colors, DebugInstructions, Header, LearnMoreLinks, ReloadInstructions } from 'react-native/Libraries/NewAppScreen'
 import SplashScreen from './Screen/SplashScreen'
 import LoginScreen from './Screen/LoginScreen'
@@ -22,7 +21,7 @@ import EmailStateFalse from './Screen/DrawerScreens/EmailStateFalse'
 import AuthEmail from './Screen/AuthEmailRoutes'
 import { Provider } from 'react-redux'
 import configureStore from './redux/reducers/store'
-import InitialStacK from './Navigation'
+import AppNavigator from './Navigation'
 const store = configureStore()
 const Stack = createStackNavigator()
 const Auth = () => {
@@ -49,10 +48,15 @@ const Auth = () => {
 }
 
 function App() {
+  const navigatorRef = React.createRef()
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <InitialStacK />
+        <AppNavigator
+          ref={(navigatorRef) => {
+            NavigationService.setTopLevelNavigator(navigatorRef)
+          }}
+        />
       </NavigationContainer>
     </Provider>
   )
